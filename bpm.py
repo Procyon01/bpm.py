@@ -1,6 +1,10 @@
 #!/usr/bin/python
 import time
 
+# Some VT100 control code magic
+cursor_up = '\x1b[1A'
+erase_line = '\x1b[2K'
+
 class _Getch:
     def __init__(self):
         try:
@@ -36,23 +40,22 @@ class _GetchWindows:
         return msvcrt.getch()
 
 
+
 getch = _Getch()
 beats = 0
 begin = 0
-try:
-    while True:
-        key = ord(getch())
-        if key == 9:
-            exit(0)
+while True:
+    key = ord(getch())
+    if key == 27 or key == 3:   # Linux Escape or Ctrl+C
+        exit(0)
+    else:
+        beats = beats + 1
+        if beats == 1:
+            begin = time.time()
+            print('\n> First beat')
+            continue
         else:
-            beats = beats + 1
-            if beats == 1:
-                begin = time.time()
-                continue
-            else:
-                interval = time.time() - begin
-                interval_minutes = interval / 60
-                bpm = beats / interval_minutes
-                print(bpm)
-except KeyboardInterrupt:
-    exit(0)
+            interval = time.time() - begin
+            interval_minutes = interval / 60
+            bpm = int(beats / interval_minutes)
+            print(cursor_up + erase_line + '> ' + str(bpm))
