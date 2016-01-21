@@ -42,20 +42,22 @@ class _GetchWindows:
 
 
 getch = _Getch()
-beats = 0
-begin = 0
+beats = -1 
+begin = 0 
+
+print("BPM counter. Begin tapping for BPM...")
+
 while True:
     key = ord(getch())
     if key == 27 or key == 3:   # Linux Escape or Ctrl+C
         exit(0)
     else:
         beats = beats + 1
-        if beats == 1:
+	if beats == 0:
             begin = time.time()
             print('\n> First beat')
-            continue
         else:
             interval = time.time() - begin
             interval_minutes = interval / 60
             bpm = int(beats / interval_minutes)
-            print(cursor_up + erase_line + '> ' + str(bpm))
+            print(cursor_up + erase_line + 'Average BPM > ' + str(bpm))
